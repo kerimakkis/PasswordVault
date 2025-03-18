@@ -27,7 +27,7 @@
       </ul>
   
       <!-- 📌 AutoCapture Şifre Onay Modali -->
-      <div v-if="showSavePrompt" class="modal d-block">
+      <div v-if="showCaptureModal" class="modal d-block">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -73,7 +73,7 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, watch } from 'vue';
+  import { ref, onMounted, computed } from 'vue';
   import { db } from '../utils/db';
   import { useToast } from 'vue-toastification';
   import { encryptPassword, decryptPassword } from '../utils/encryption';
@@ -87,7 +87,7 @@
   const masterPassword = ref(localStorage.getItem('masterPassword') || '');
   
   // **AutoCapture için değişkenler**
-  const showSavePrompt = ref(false);
+  const showCaptureModal = ref(false);
   const capturedWebsite = ref('');
   const capturedUsername = ref('');
   const capturedPassword = ref('');
@@ -105,7 +105,7 @@
     capturedWebsite.value = website;
     capturedUsername.value = username;
     capturedPassword.value = password;
-    showSavePrompt.value = true;
+    showCaptureModal.value = true;
   };
   
   // **Kullanıcı Onay Verirse Şifreyi Kaydet**
@@ -123,14 +123,14 @@
       encryptedPassword
     });
   
-    toast.success(`Şifre kaydedildi: ${capturedWebsite.value}`);
-    showSavePrompt.value = false;
+    showCaptureModal.value = false;
     fetchPasswords();
+    toast.success(`Şifre kaydedildi: ${capturedWebsite.value}`);
   };
   
   // **Kullanıcı İptal Ederse Modal Kapat**
   const cancelSavePassword = () => {
-    showSavePrompt.value = false;
+    showCaptureModal.value = false;
     toast.info("Şifre kaydetme işlemi iptal edildi");
   };
   
@@ -165,6 +165,11 @@
   onMounted(() => {
     fetchPasswords();
     
+    // Test.html sayfasında değil, gerçek uygulamada çalışacak
+    // Bu fonksiyon Chrome uzantısı olarak çalıştığında
+    // diğer web sayfalarındaki şifreleri yakalayacak
+    observeLoginForms(handleCapturedPassword);
+    
     // Chrome storage'dan yakalanan şifreleri kontrol et
     if (typeof chrome !== 'undefined' && chrome.storage) {
       chrome.storage.local.get(['capturedData', 'showSavePrompt'], (result) => {
@@ -172,7 +177,7 @@
           capturedWebsite.value = result.capturedData.website;
           capturedUsername.value = result.capturedData.username;
           capturedPassword.value = result.capturedData.password;
-          showSavePrompt.value = true;
+          showCaptureModal.value = true;
           
           // Kullanıldıktan sonra temizle
           chrome.storage.local.set({ showSavePrompt: false });
@@ -239,6 +244,71 @@
       toast.success("Şifre silindi!");
     }
   };
+  
+  // Chrome mesajlarını dinle
+  const setupChromeMessageListener = () => {
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        console.log("Dashboard'da mesaj alındı:", message);
+        
+        if (message.action === "showCaptureModal") {
+          capturedWebsite.value = message.data.website || '';
+          capturedUsername.value = message.data.username || '';
+          capturedPassword.value = message.data.password || '';
+          showCaptureModal.value = true;
+          
+          // Yanıt gönder
+          sendResponse({status: "success"});
+        }
+        
+        // Mesajı işlemeye devam etmek için true döndür
+        return true;
+      });
+    }
+  };
+  
+  // Window event listener
+  const setupWindowEventListener = () => {
+    window.addEventListener('passwordCaptured', (event) => {
+      console.log("Dashboard'da window event alındı:", event.detail);
+      
+      capturedWebsite.value = event.detail.website || '';
+      capturedUsername.value = event.detail.username || '';
+      capturedPassword.value = event.detail.password || '';
+      showCaptureModal.value = true;
+    });
+  };
+  
+  // Sayfa yüklendiğinde
+  onMounted(() => {
+    fetchPasswords();
+    
+    // Chrome mesaj dinleyicisini kur
+    setupChromeMessageListener();
+    
+    // Window event dinleyicisini kur
+    setupWindowEventListener();
+    
+    // Test.html sayfasında değil, gerçek uygulamada çalışacak
+    // Bu fonksiyon Chrome uzantısı olarak çalıştığında
+    // diğer web sayfalarındaki şifreleri yakalayacak
+    observeLoginForms(handleCapturedPassword);
+    
+    // Chrome storage'dan yakalanan şifreleri kontrol et
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+      chrome.storage.local.get(['capturedData', 'showSavePrompt'], (result) => {
+        if (result.showSavePrompt && result.capturedData) {
+          capturedWebsite.value = result.capturedData.website;
+          capturedUsername.value = result.capturedData.username;
+          capturedPassword.value = result.capturedData.password;
+          showCaptureModal.value = true;
+          
+          // Kullanıldıktan sonra temizle
+          chrome.storage.local.set({ showSavePrompt: false });
+        }
+      });
+    }
+  });
   </script>
   
   <style scoped>
