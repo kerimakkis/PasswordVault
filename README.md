@@ -6,24 +6,27 @@ Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihr
 ## Verwendete Technologien
 - **Vue.js 3** - Modernes Frontend-Framework
 - **Vue Router** - Für die Seitenrouting
-- **Pinia oder Vuex** - Für das State Management (wird ausgewählt)
-- **Axios** - Für API-Aufrufe
-- **Vue Auth 3** - Für Benutzerauthentifizierung und Sitzungsmanagement
-- **IndexedDB (mit Dexie.js)** - Browser-Datenbankunterstützung
-- **Crypto API (Web Crypto oder CryptoJS)** - Für die sichere Speicherung von Passwörtern
-- **AES-256** - Fortgeschrittener Verschlüsselungsstandard (Advanced Encryption Standard) für starken Datenschutz
-- **Tailwind CSS oder Bootstrap** - Für responsives und modernes UI-Design
+- **Dexie.js** - Wrapper für IndexedDB zur clientseitigen Datenspeicherung
+- **CryptoJS** - Für Verschlüsselung und Hashing-Funktionen
+- **AES-256** - Fortgeschrittener Verschlüsselungsstandard für starken Datenschutz
 - **Vite** - Für Projektbau und Entwicklungsumgebung
+- **Chrome Extension API** - Für die Browser-Erweiterung (Manifest V3)
+- **Vue-toastification** - Für das Benachrichtigungssystem
+- **Custom CSS** - Für responsives Design und UI-Komponenten
+
+## Features der Browser-Erweiterung
+- **Content Scripts** - Zum Erkennen und Abfangen von Passwortformularen
+- **Background Scripts** - Für Hintergrundprozesse und Kommunikation mit der Hauptanwendung
+- **Automatische Passworterfassung** - Erkennt Anmeldeversuche auf Websites
+- **Nahtlose Integration** - Direkte Verbindung zur Hauptanwendung
 
 ## Funktionen
 - 🔐 **Sichere Passwortspeicherung** - Passwörter werden stark verschlüsselt gespeichert.
 - 📲 **Responsive Design** - Flexibles Design, das mit allen Geräten kompatibel ist.
-- 🔑 **Benutzeranmeldung und Authentifizierung** - JWT-basierte Authentifizierung mit Vue Auth 3.
+- 🔑 **Benutzeranmeldung und Authentifizierung** - Client-seitige Authentifizierung mit Master-Passwort.
 - 💾 **Browser-Datenbankunterstützung** - Offline-Datenspeicherung mit IndexedDB.
-- 🔄 **Passwortgenerator** - Erstellung von starken und zufälligen Passwörtern.
-- 🛠 **Kategorienbasierte Passwortverwaltung** - Gruppierung und Verwaltung von Passwörtern nach Kategorien.
-- 🌓 **Dunkelmodus** - Benutzerfreundliche Schnittstelle.
-- 🏷️ **Notiz- und Etikettierungssystem** - Möglichkeit, Passwörtern Beschreibungen und Etiketten hinzuzufügen.
+- 🛠 **Passwortverwaltung** - Einfache Verwaltung gespeicherter Passwörter.
+- 🌐 **Browser-Erweiterung** - Automatisches Erfassen von Passwörtern von Websites.
 - 🔒 **Starke Verschlüsselung mit AES-256** - Alle Daten werden mit dem AES-256-Algorithmus verschlüsselt gespeichert.
 
 ## Installation & Nutzung
@@ -46,16 +49,18 @@ Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihr
 ```
 
 ## Roadmap
-- [ ] Starten eines Vue.js 3 Projekts (mit Vite)
-- [ ] Seitenrouting mit Vue Router
-- [ ] Erstellung von Benutzerregistrierungs-/Login-Seiten
-- [ ] Integration von IndexedDB (mit Dexie.js)
-- [ ] Sichere Verschlüsselung von Passwörtern (Crypto API / AES-256)
-- [ ] Speicherung von Passwörtern nach Kategorien
-- [ ] Responsives Design (Tailwind CSS / Bootstrap)
+- [x] Starten eines Vue.js 3 Projekts (mit Vite)
+- [x] Seitenrouting mit Vue Router
+- [x] Erstellung von Benutzerregistrierungs-/Login-Seiten
+- [x] Integration von IndexedDB (mit Dexie.js)
+- [x] Sichere Verschlüsselung von Passwörtern (CryptoJS / AES-256)
+- [x] Speicherung von Passwörtern
+- [x] Responsives Design (Custom CSS)
+- [x] Integration einer Browser-Erweiterung
 - [ ] Hinzufügen eines Dunkelmodus
 - [ ] Hinzufügen eines Passwortgenerators
-- [ ] Hinzufügen von Offline-Unterstützung
+- [ ] Kategorien für Passwörter
+- [ ] Import/Export-Funktionalität
 
 ## Beitrag
 Wenn Sie zum Projekt beitragen möchten, senden Sie bitte einen **Pull Request** oder öffnen Sie ein **Issue**. Jedes Feedback und jeder Vorschlag ist willkommen! 🚀
