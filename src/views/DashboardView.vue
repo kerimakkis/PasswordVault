@@ -1,6 +1,12 @@
 <template>
     <div class="container mt-4">
-      <h1 class="mb-4">Şifreleriniz</h1>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Şifreleriniz</h1>
+        <div>
+          <span class="me-3">{{ currentUser?.username }}</span>
+          <button @click="logout" class="btn btn-outline-danger">Çıkış Yap</button>
+        </div>
+      </div>
   
       <!-- 📌 Manuel Şifre Ekleme Formu -->
       <div class="mb-3">
@@ -74,240 +80,220 @@
   
   <script setup>
   import { ref, onMounted, computed } from 'vue';
-  import { db } from '../utils/db';
   import { useToast } from 'vue-toastification';
+  import { useRouter } from 'vue-router';
+  import { db, auth } from '../utils/db';
   import { encryptPassword, decryptPassword } from '../utils/encryption';
-  import { observeLoginForms } from '../utils/autocapture';
   
+  const router = useRouter();
   const toast = useToast();
+  
+  // Kullanıcı bilgileri
+  const currentUser = ref(null);
+  
+  // Şifre listesi
   const passwordList = ref([]);
+  
+  // Yeni şifre ekleme için
   const newWebsite = ref('');
   const newUsername = ref('');
   const newPassword = ref('');
-  const masterPassword = ref(localStorage.getItem('masterPassword') || '');
   
-  // **AutoCapture için değişkenler**
+  // Şifre düzenleme için
+  const editModalOpen = ref(false);
+  const editRecord = ref({});
+  
+  // AutoCapture ile yakalanan şifreler için
   const showCaptureModal = ref(false);
   const capturedWebsite = ref('');
   const capturedUsername = ref('');
   const capturedPassword = ref('');
-
-  const editModalOpen = ref(false);
-  const editRecord = ref({});
   
-  // **IndexedDB'den Şifreleri Çek**
+  // Master password'e kolay erişim
+  const masterPassword = computed(() => currentUser.value?.masterPassword || '');
+  
+  // Şifreleri veritabanından çek
   const fetchPasswords = async () => {
-    passwordList.value = await db.passwords.toArray();
+    const userId = auth.getUserId();
+    if (!userId) return;
+    
+    passwordList.value = await db.passwords.where('userId').equals(userId).toArray();
   };
   
-  // **AutoCapture ile Şifre Yakalama**
-  const handleCapturedPassword = (username, password, website) => {
-    capturedWebsite.value = website;
-    capturedUsername.value = username;
-    capturedPassword.value = password;
-    showCaptureModal.value = true;
-  };
-  
-  // **Kullanıcı Onay Verirse Şifreyi Kaydet**
-  const saveCapturedPassword = async () => {
-    if (!masterPassword.value) {
-      toast.error("Master Password bulunamadı!");
-      return;
-    }
-  
-    const encryptedPassword = encryptPassword(capturedPassword.value, masterPassword.value);
-  
-    await db.passwords.add({
-      website: capturedWebsite.value,
-      username: capturedUsername.value,
-      encryptedPassword
-    });
-  
-    showCaptureModal.value = false;
-    fetchPasswords();
-    toast.success(`Şifre kaydedildi: ${capturedWebsite.value}`);
-  };
-  
-  // **Kullanıcı İptal Ederse Modal Kapat**
-  const cancelSavePassword = () => {
-    showCaptureModal.value = false;
-    toast.info("Şifre kaydetme işlemi iptal edildi");
-  };
-  
-  // **Manuel Şifre Ekleme**
+  // Yeni şifre ekle
   const addPassword = async () => {
     if (!newWebsite.value || !newUsername.value || !newPassword.value) {
-      toast.error("Lütfen tüm alanları doldurun!");
+      toast.error("Tüm alanları doldurun!");
       return;
     }
-  
-    if (!masterPassword.value) {
-      toast.error("Master Password bulunamadı!");
-      return;
-    }
-  
+    
     const encryptedPassword = encryptPassword(newPassword.value, masterPassword.value);
-  
+    const userId = auth.getUserId();
+    
     await db.passwords.add({
+      userId,
       website: newWebsite.value,
       username: newUsername.value,
-      encryptedPassword
+      encryptedPassword,
+      dateAdded: new Date().toISOString()
     });
-  
+    
     newWebsite.value = '';
     newUsername.value = '';
     newPassword.value = '';
+    
     fetchPasswords();
-    toast.success("Şifre başarıyla eklendi!");
+    toast.success("Şifre eklendi!");
   };
   
-  // **Şifre Yakalamayı Başlat**
-  onMounted(() => {
-    fetchPasswords();
-    
-    // Test.html sayfasında değil, gerçek uygulamada çalışacak
-    // Bu fonksiyon Chrome uzantısı olarak çalıştığında
-    // diğer web sayfalarındaki şifreleri yakalayacak
-    observeLoginForms(handleCapturedPassword);
-    
-    // Chrome storage'dan yakalanan şifreleri kontrol et
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.local.get(['capturedData', 'showSavePrompt'], (result) => {
-        if (result.showSavePrompt && result.capturedData) {
-          capturedWebsite.value = result.capturedData.website;
-          capturedUsername.value = result.capturedData.username;
-          capturedPassword.value = result.capturedData.password;
-          showCaptureModal.value = true;
-          
-          // Kullanıldıktan sonra temizle
-          chrome.storage.local.set({ showSavePrompt: false });
-        }
-      });
-    }
-  });
-  
-  // Şifre gösterme/gizleme fonksiyonları
-  const decryptStoredPassword = (record) => {
-    if (!masterPassword.value) {
-      toast.error("Master Password bulunamadı!");
+  // Yakalanan şifreyi kaydet
+  const saveCapturedPassword = async () => {
+    if (!capturedWebsite.value || !capturedUsername.value || !capturedPassword.value) {
+      toast.error("Şifre bilgileri eksik!");
       return;
     }
     
-    const decrypted = decryptPassword(record.encryptedPassword, masterPassword.value);
-    if (decrypted) {
-      record.decryptedPassword = decrypted;
-    } else {
-      toast.error("Şifre çözülemedi!");
+    const encryptedPassword = encryptPassword(capturedPassword.value, masterPassword.value);
+    const userId = auth.getUserId();
+    
+    try {
+      await db.passwords.add({
+        userId,
+        website: capturedWebsite.value,
+        username: capturedUsername.value,
+        encryptedPassword,
+        dateAdded: new Date().toISOString()
+      });
+      
+      showCaptureModal.value = false;
+      capturedWebsite.value = '';
+      capturedUsername.value = '';
+      capturedPassword.value = '';
+      
+      fetchPasswords();
+      toast.success("Yakalanan şifre kaydedildi!");
+    } catch (error) {
+      console.error("Şifre kaydedilemedi:", error);
+      toast.error("Şifre kaydedilemedi: " + error.message);
     }
   };
   
+  // URL'den gelen şifreyi otomatik kaydet
+  const savePasswordFromUrl = async (website, username, password) => {
+    if (!website || !username || !password) {
+      console.error("Şifre bilgileri eksik!");
+      return false;
+    }
+    
+    const encryptedPassword = encryptPassword(password, masterPassword.value);
+    const userId = auth.getUserId();
+    
+    try {
+      await db.passwords.add({
+        userId,
+        website: website,
+        username: username,
+        encryptedPassword,
+        dateAdded: new Date().toISOString()
+      });
+      
+      fetchPasswords();
+      toast.success(`${website} için şifre otomatik olarak kaydedildi!`);
+      return true;
+    } catch (error) {
+      console.error("Şifre otomatik kaydedilemedi:", error);
+      toast.error("Şifre otomatik kaydedilemedi: " + error.message);
+      return false;
+    }
+  };
+  
+  // Şifre kaydetmeyi iptal et
+  const cancelSavePassword = () => {
+    showCaptureModal.value = false;
+    capturedWebsite.value = '';
+    capturedUsername.value = '';
+    capturedPassword.value = '';
+  };
+  
+  // Şifreyi göster/gizle
+  const decryptStoredPassword = (record) => {
+    try {
+      record.decryptedPassword = decryptPassword(record.encryptedPassword, masterPassword.value);
+    } catch (error) {
+      console.error("Şifre çözülemedi:", error);
+      toast.error("Şifre çözülemedi. Master şifre doğru mu?");
+    }
+  };
+  
+  // Şifreyi gizle
   const hidePassword = (record) => {
     record.decryptedPassword = null;
   };
   
-  // Şifre düzenleme fonksiyonları
+  // Şifre düzenleme penceresini aç
   const editPassword = (record) => {
     editRecord.value = { ...record, newPassword: '' };
     editModalOpen.value = true;
   };
   
+  // Şifreyi güncelle
   const updatePassword = async () => {
     if (!editRecord.value.website || !editRecord.value.username) {
-      toast.error("Website ve kullanıcı adı gereklidir!");
+      toast.error("Website ve kullanıcı adı gerekli!");
       return;
     }
     
-    const updatedRecord = {
-      id: editRecord.value.id,
-      website: editRecord.value.website,
-      username: editRecord.value.username,
-      encryptedPassword: editRecord.value.encryptedPassword
-    };
+    const updatedRecord = { ...editRecord.value };
     
-    if (editRecord.value.newPassword) {
-      updatedRecord.encryptedPassword = encryptPassword(
-        editRecord.value.newPassword, 
-        masterPassword.value
-      );
+    // Şifre değiştiyse güncelle
+    if (updatedRecord.newPassword) {
+      updatedRecord.encryptedPassword = encryptPassword(updatedRecord.newPassword, masterPassword.value);
     }
     
-    await db.passwords.update(editRecord.value.id, updatedRecord);
-    editModalOpen.value = false;
-    fetchPasswords();
-    toast.success("Şifre güncellendi!");
+    delete updatedRecord.newPassword;
+    delete updatedRecord.decryptedPassword;
+    
+    try {
+      await db.passwords.update(updatedRecord.id, updatedRecord);
+      editModalOpen.value = false;
+      fetchPasswords();
+      toast.success("Şifre güncellendi!");
+    } catch (error) {
+      console.error("Şifre güncellenemedi:", error);
+      toast.error("Şifre güncellenemedi: " + error.message);
+    }
   };
   
+  // Şifre sil
   const deletePassword = async (id) => {
-    if (confirm("Bu şifreyi silmek istediğinizden emin misiniz?")) {
+    try {
       await db.passwords.delete(id);
       fetchPasswords();
       toast.success("Şifre silindi!");
+    } catch (error) {
+      console.error("Şifre silinemedi:", error);
+      toast.error("Şifre silinemedi: " + error.message);
     }
   };
   
-  // Chrome mesajlarını dinle
-  const setupChromeMessageListener = () => {
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        console.log("Dashboard'da mesaj alındı:", message);
-        
-        if (message.action === "showCaptureModal") {
-          capturedWebsite.value = message.data.website || '';
-          capturedUsername.value = message.data.username || '';
-          capturedPassword.value = message.data.password || '';
-          showCaptureModal.value = true;
-          
-          // Yanıt gönder
-          sendResponse({status: "success"});
-        }
-        
-        // Mesajı işlemeye devam etmek için true döndür
-        return true;
-      });
-    }
-  };
-  
-  // Window event listener
-  const setupWindowEventListener = () => {
-    window.addEventListener('passwordCaptured', (event) => {
-      console.log("Dashboard'da window event alındı:", event.detail);
-      
-      capturedWebsite.value = event.detail.website || '';
-      capturedUsername.value = event.detail.username || '';
-      capturedPassword.value = event.detail.password || '';
-      showCaptureModal.value = true;
-    });
+  // Çıkış yap
+  const logout = () => {
+    auth.logout();
+    router.push('/login');
+    toast.info("Çıkış yapıldı");
   };
   
   // Sayfa yüklendiğinde
   onMounted(async () => {
-    await fetchPasswords();
+    // Kullanıcı bilgilerini al
+    currentUser.value = auth.loadUser();
     
-    // Chrome mesaj dinleyicisini kur
-    setupChromeMessageListener();
-    
-    // Window event dinleyicisini kur
-    setupWindowEventListener();
-    
-    // Test.html sayfasında değil, gerçek uygulamada çalışacak
-    // Bu fonksiyon Chrome uzantısı olarak çalıştığında
-    // diğer web sayfalarındaki şifreleri yakalayacak
-    observeLoginForms(handleCapturedPassword);
-    
-    // Chrome storage'dan yakalanan şifreleri kontrol et
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.local.get(['capturedData', 'showSavePrompt'], (result) => {
-        if (result.showSavePrompt && result.capturedData) {
-          capturedWebsite.value = result.capturedData.website;
-          capturedUsername.value = result.capturedData.username;
-          capturedPassword.value = result.capturedData.password;
-          showCaptureModal.value = true;
-          
-          // Kullanıldıktan sonra temizle
-          chrome.storage.local.set({ showSavePrompt: false });
-        }
-      });
+    if (!currentUser.value) {
+      router.push('/login');
+      return;
     }
+    
+    await fetchPasswords();
     
     // URL parametrelerini kontrol et
     const urlParams = new URLSearchParams(window.location.search);
@@ -339,33 +325,6 @@
       window.history.replaceState({}, document.title, "/dashboard");
     }
   });
-  
-  // URL'den gelen şifreyi otomatik kaydet
-  const savePasswordFromUrl = async (website, username, password) => {
-    if (!website || !username || !password) {
-      console.error("Şifre bilgileri eksik!");
-      return false;
-    }
-    
-    const encryptedPassword = encryptPassword(password, masterPassword.value);
-    
-    try {
-      await db.passwords.add({
-        website: website,
-        username: username,
-        encryptedPassword,
-        dateAdded: new Date().toISOString()
-      });
-      
-      fetchPasswords();
-      toast.success(`${website} için şifre otomatik olarak kaydedildi!`);
-      return true;
-    } catch (error) {
-      console.error("Şifre otomatik kaydedilemedi:", error);
-      toast.error("Şifre otomatik kaydedilemedi: " + error.message);
-      return false;
-    }
-  };
   </script>
   
   <style scoped>
@@ -379,6 +338,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1050;
   }
   .modal-content {
     background: white;

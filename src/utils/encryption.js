@@ -1,16 +1,25 @@
 import CryptoJS from "crypto-js";
 
-// AES-256 ile şifreleme fonksiyonu
-export function encryptPassword(password, masterKey) {
-  return CryptoJS.AES.encrypt(password, masterKey).toString();
+// Rastgele salt oluştur
+export function generateSalt(length = 16) {
+  return CryptoJS.lib.WordArray.random(length).toString();
 }
 
-// AES-256 ile şifreyi çözme fonksiyonu
-export function decryptPassword(encryptedPassword, masterKey) {
-  try {
-    const bytes = CryptoJS.AES.decrypt(encryptedPassword, masterKey);
-    return bytes.toString(CryptoJS.enc.Utf8);
-  } catch (error) {
-    return null;
-  }
+// Şifre hash'leme (kullanıcı master password hash'lemek için)
+export function hashPassword(password, salt) {
+  return CryptoJS.PBKDF2(password, salt, {
+    keySize: 512 / 32,
+    iterations: 1000
+  }).toString();
+}
+
+// Master password ile şifre şifreleme
+export function encryptPassword(password, masterPassword) {
+  return CryptoJS.AES.encrypt(password, masterPassword).toString();
+}
+
+// Master password ile şifre çözme
+export function decryptPassword(encryptedPassword, masterPassword) {
+  const bytes = CryptoJS.AES.decrypt(encryptedPassword, masterPassword);
+  return bytes.toString(CryptoJS.enc.Utf8);
 }
