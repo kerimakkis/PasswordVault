@@ -280,8 +280,8 @@
   };
   
   // Sayfa yüklendiğinde
-  onMounted(() => {
-    fetchPasswords();
+  onMounted(async () => {
+    await fetchPasswords();
     
     // Chrome mesaj dinleyicisini kur
     setupChromeMessageListener();
@@ -308,7 +308,64 @@
         }
       });
     }
+    
+    // URL parametrelerini kontrol et
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('captured') === 'true') {
+      const website = urlParams.get('website') || '';
+      const username = urlParams.get('username') || '';
+      const password = urlParams.get('password') || '';
+      
+      console.log("URL'den şifre bilgileri alındı:", {
+        username: username,
+        website: website,
+        password: password ? "******" : "boş"
+      });
+      
+      // Şifreyi otomatik olarak kaydet
+      if (website && username && password) {
+        const saved = await savePasswordFromUrl(website, username, password);
+        
+        if (!saved) {
+          // Otomatik kayıt başarısız olursa, manuel onay modalını göster
+          capturedWebsite.value = website;
+          capturedUsername.value = username;
+          capturedPassword.value = password;
+          showCaptureModal.value = true;
+        }
+      }
+      
+      // Parametreleri temizle
+      window.history.replaceState({}, document.title, "/dashboard");
+    }
   });
+  
+  // URL'den gelen şifreyi otomatik kaydet
+  const savePasswordFromUrl = async (website, username, password) => {
+    if (!website || !username || !password) {
+      console.error("Şifre bilgileri eksik!");
+      return false;
+    }
+    
+    const encryptedPassword = encryptPassword(password, masterPassword.value);
+    
+    try {
+      await db.passwords.add({
+        website: website,
+        username: username,
+        encryptedPassword,
+        dateAdded: new Date().toISOString()
+      });
+      
+      fetchPasswords();
+      toast.success(`${website} için şifre otomatik olarak kaydedildi!`);
+      return true;
+    } catch (error) {
+      console.error("Şifre otomatik kaydedilemedi:", error);
+      toast.error("Şifre otomatik kaydedilemedi: " + error.message);
+      return false;
+    }
+  };
   </script>
   
   <style scoped>
