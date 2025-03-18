@@ -1,69 +1,68 @@
+# Password Vault - Vue.js 3 Passwort-Manager
 
-# Password Vault - Vue.js 3 Password Manager
+## Projektbeschreibung
+Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihre Passwörter sicher zu speichern. Die Anwendung ist mit Sicherheitsmaßnahmen wie Benutzerauthentifizierung und verschlüsselter Datenspeicherung ausgestattet. Sie ist responsiv gestaltet und bietet Offline-Unterstützung.
 
-## Proje Açıklaması
-Password Vault, kullanıcıların güvenli bir şekilde şifrelerini saklayabilecekleri bir web tabanlı uygulamadır. Kullanıcı doğrulama (authentication) ve verilerin şifrelenerek saklanması gibi güvenlik önlemleri ile donatılmıştır. Uygulama, mobil uyumlu (responsive) olarak tasarlanmıştır ve offline desteği sunar.
+## Verwendete Technologien
+- **Vue.js 3** - Modernes Frontend-Framework
+- **Vue Router** - Für die Seitenrouting
+- **Pinia oder Vuex** - Für das State Management (wird ausgewählt)
+- **Axios** - Für API-Aufrufe
+- **Vue Auth 3** - Für Benutzerauthentifizierung und Sitzungsmanagement
+- **IndexedDB (mit Dexie.js)** - Browser-Datenbankunterstützung
+- **Crypto API (Web Crypto oder CryptoJS)** - Für die sichere Speicherung von Passwörtern
+- **AES-256** - Fortgeschrittener Verschlüsselungsstandard (Advanced Encryption Standard) für starken Datenschutz
+- **Tailwind CSS oder Bootstrap** - Für responsives und modernes UI-Design
+- **Vite** - Für Projektbau und Entwicklungsumgebung
 
-## Kullanılan Teknolojiler
-- **Vue.js 3** - Modern frontend framework
-- **Vue Router** - Sayfa yönlendirmeleri için
-- **Pinia veya Vuex** - State management için (Tercih edilecek)
-- **Axios** - API çağrıları için
-- **Vue Auth 3** - Kullanıcı doğrulama ve oturum yönetimi için
-- **IndexedDB (Dexie.js ile)** - Tarayıcı veritabanı desteği
-- **Crypto API (Web Crypto veya CryptoJS)** - Şifrelerin güvenli şekilde saklanması
-- **AES-256** - Gelişmiş Şifreleme Standardı (Advanced Encryption Standard) ile güçlü veri koruma
-- **Tailwind CSS veya Bootstrap** - Responsive ve modern UI tasarımı
-- **Vite** - Proje oluşturma ve geliştirme ortamı
+## Funktionen
+- 🔐 **Sichere Passwortspeicherung** - Passwörter werden stark verschlüsselt gespeichert.
+- 📲 **Responsive Design** - Flexibles Design, das mit allen Geräten kompatibel ist.
+- 🔑 **Benutzeranmeldung und Authentifizierung** - JWT-basierte Authentifizierung mit Vue Auth 3.
+- 💾 **Browser-Datenbankunterstützung** - Offline-Datenspeicherung mit IndexedDB.
+- 🔄 **Passwortgenerator** - Erstellung von starken und zufälligen Passwörtern.
+- 🛠 **Kategorienbasierte Passwortverwaltung** - Gruppierung und Verwaltung von Passwörtern nach Kategorien.
+- 🌓 **Dunkelmodus** - Benutzerfreundliche Schnittstelle.
+- 🏷️ **Notiz- und Etikettierungssystem** - Möglichkeit, Passwörtern Beschreibungen und Etiketten hinzuzufügen.
+- 🔒 **Starke Verschlüsselung mit AES-256** - Alle Daten werden mit dem AES-256-Algorithmus verschlüsselt gespeichert.
 
-## Özellikler
-- 🔐 **Güvenli Şifre Saklama** - Kullanıcının şifreleri güçlü bir şekilde şifrelenerek saklanır.
-- 📲 **Mobil Uyumlu (Responsive Design)** - Tüm cihazlara uyumlu, esnek tasarım.
-- 🔑 **Kullanıcı Girişi ve Doğrulama** - Vue Auth 3 ile JWT tabanlı authentication.
-- 💾 **Tarayıcı Veritabanı Desteği** - IndexedDB kullanarak offline veri saklama.
-- 🔄 **Şifre Üretici** - Güçlü ve rastgele şifreler oluşturabilme.
-- 🛠 **Kategori Bazlı Şifre Yönetimi** - Şifreleri gruplama ve düzenleme.
-- 🌓 **Karanlık Mod (Dark Mode)** - Kullanıcı dostu bir arayüz deneyimi.
-- 🏷️ **Not ve Etiketleme Sistemi** - Şifrelere açıklama ve etiket ekleyebilme.
-- 🔒 **AES-256 ile Güçlü Şifreleme** - Tüm veriler AES-256 algoritması ile şifrelenerek saklanır.
-
-## Kurulum & Kullanım
-### 1. Projeyi Klonlayın
+## Installation & Nutzung
+### 1. Klonen Sie das Projekt
 ```bash
- git clone https://github.com/kullanici-adiniz/password-vault.git
+ git clone https://github.com/benutzername/password-vault.git
  cd password-vault
 ```
-### 2. Bağımlılıkları Yükleyin
+### 2. Installieren Sie die Abhängigkeiten
 ```bash
  npm install
 ```
-### 3. Geliştirme Ortamını Başlatın
+### 3. Starten Sie die Entwicklungsumgebung
 ```bash
  npm run dev
 ```
-### 4. Build Alma (Deploy İçin)
+### 4. Erstellen Sie ein Build (für Deployment)
 ```bash
  npm run build
 ```
 
-## Yol Haritası
-- [ ] Vue.js 3 projesi başlatma (Vite ile)
-- [ ] Vue Router ile sayfa yönlendirme
-- [ ] Kullanıcı kayıt/giriş sayfalarının oluşturulması
-- [ ] IndexedDB entegrasyonu (Dexie.js ile)
-- [ ] Şifrelerin güvenli şifrelenmesi (Crypto API / AES-256)
-- [ ] Kategorilere göre şifreleri saklama
-- [ ] Responsive tasarım (Tailwind CSS / Bootstrap)
-- [ ] Karanlık Mod ekleme
-- [ ] Şifre üretici ekleme
-- [ ] Offline desteği ekleme
+## Roadmap
+- [ ] Starten eines Vue.js 3 Projekts (mit Vite)
+- [ ] Seitenrouting mit Vue Router
+- [ ] Erstellung von Benutzerregistrierungs-/Login-Seiten
+- [ ] Integration von IndexedDB (mit Dexie.js)
+- [ ] Sichere Verschlüsselung von Passwörtern (Crypto API / AES-256)
+- [ ] Speicherung von Passwörtern nach Kategorien
+- [ ] Responsives Design (Tailwind CSS / Bootstrap)
+- [ ] Hinzufügen eines Dunkelmodus
+- [ ] Hinzufügen eines Passwortgenerators
+- [ ] Hinzufügen von Offline-Unterstützung
 
-## Katkıda Bulunma
-Projeye katkıda bulunmak istiyorsanız, lütfen bir **pull request** gönderin veya bir **issue** açın. Her türlü geri bildirim ve öneri değerlidir! 🚀
+## Beitrag
+Wenn Sie zum Projekt beitragen möchten, senden Sie bitte einen **Pull Request** oder öffnen Sie ein **Issue**. Jedes Feedback und jeder Vorschlag ist willkommen! 🚀
 
 ---
 
-📌 **Lisans**: MIT Lisansı altında dağıtılmaktadır.
+📌 **Lizenz**: Unter der MIT-Lizenz veröffentlicht.
 
-**İletişim:**
-📧 email@example.com | 🌐 [Proje Sayfası](https://github.com/kullanici-adiniz/password-vault)
+**Kontakt:**
+📧 email@example.com | 🌐 [Projektseite](https://github.com/benutzername/password-vault)
