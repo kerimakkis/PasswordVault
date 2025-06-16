@@ -70,4 +70,4 @@ Wenn Sie zum Projekt beitragen möchten, senden Sie bitte einen **Pull Request**
 📌 **Lizenz**: Unter der MIT-Lizenz veröffentlicht.
 
 **Kontakt:**
-📧 email@example.com | 🌐 [Projektseite](https://github.com/benutzername/password-vault)
+📧 email@example.com | 🌐 [Projektseite](https://github.com/kerimakkis/password-vault)
