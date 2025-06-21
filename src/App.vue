@@ -1,10 +1,18 @@
 <script setup>
 import { RouterView } from 'vue-router';
+import { useTheme } from './composables/useTheme';
+
+const { isDark, toggleTheme } = useTheme();
 </script>
 
 <template>
   <div class="container mt-4">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <!-- Theme Toggle Button -->
+    <button @click="toggleTheme" class="theme-toggle" :title="isDark ? 'Light Mode' : 'Dark Mode'">
+      <i :class="isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'"></i>
+    </button>
+
+    <nav class="navbar navbar-expand-lg mb-3">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Password Vault</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

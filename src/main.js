@@ -7,8 +7,7 @@ import 'vue-toastification/dist/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.css'
- 
-
+import './style.css' // Our custom styles should come last to override Bootstrap
 
 const app = createApp(App)
 
