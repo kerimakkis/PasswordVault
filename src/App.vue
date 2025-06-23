@@ -6,14 +6,14 @@ const { isDark, toggleTheme } = useTheme();
 </script>
 
 <template>
-  <div class="container mt-4">
+  <div>
     <!-- Theme Toggle Button -->
     <button @click="toggleTheme" class="theme-toggle" :title="isDark ? 'Light Mode' : 'Dark Mode'">
       <i :class="isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'"></i>
     </button>
 
-    <nav class="navbar navbar-expand-lg mb-3">
-      <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
         <a class="navbar-brand" href="#">Password Vault</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
@@ -31,12 +31,14 @@ const { isDark, toggleTheme } = useTheme();
       </div>
     </nav>
 
-    <RouterView />
+    <main class="container">
+      <RouterView />
+    </main>
   </div>
 </template>
 
 <style scoped>
-.container {
-  max-width: 800px;
+main.container {
+  margin-top: 5rem; /* Increased top margin for more space */
 }
 </style>

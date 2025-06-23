@@ -45,8 +45,6 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
   background-color: var(--bg-primary) !important;
@@ -57,6 +55,7 @@ a {
   font-weight: 500;
   color: var(--accent-color);
   text-decoration: inherit;
+  box-shadow: var(--shadow);
 }
 a:hover {
   color: var(--accent-hover);
@@ -98,12 +97,9 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* Bootstrap Overrides for Dark Mode */
@@ -130,7 +126,7 @@ button:focus-visible {
 }
 
 .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.55)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 }
 
 .dark .navbar-toggler-icon {
@@ -149,6 +145,12 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 0.2rem rgba(100, 108, 255, 0.25) !important;
 }
 
+/* Placeholder text color */
+.form-control::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
 /* Table styles */
 .table {
   background-color: var(--card-bg) !important;
@@ -164,8 +166,8 @@ input:focus, textarea:focus, select:focus {
 /* Theme toggle button */
 .theme-toggle {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 0.5rem;
+  right: 5rem;
   padding: 0.5rem;
   border-radius: 50%;
   width: 40px;
@@ -201,8 +203,18 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--border-color) !important;
 }
 
+/* Fix for form labels and muted text in dark mode */
+.form-label, .text-muted, p {
+    color: var(--text-secondary) !important;
+}
+
+.dark .form-label, .dark .text-muted, .dark p, .dark h3 {
+    color: var(--text-primary) !important;
+}
+
 /* Container overrides */
 .container {
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  max-width: 1140px;
 }

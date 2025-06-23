@@ -1,68 +1,66 @@
 <template>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="text-center">{{ isRegistering ? 'Hesap Oluştur' : 'Giriş Yap' }}</h3>
-          </div>
-          <div class="card-body">
-            <form @submit.prevent="submitForm">
-              <div class="mb-3">
-                <label for="username" class="form-label">Kullanıcı Adı</label>
-                <input 
-                  v-model="username" 
-                  type="text" 
-                  class="form-control" 
-                  id="username" 
-                  placeholder="Kullanıcı adınızı girin"
-                  required
-                >
-              </div>
-              
-              <div class="mb-3">
-                <label for="masterPassword" class="form-label">Master Şifre</label>
-                <input 
-                  v-model="masterPassword" 
-                  type="password" 
-                  class="form-control" 
-                  id="masterPassword" 
-                  placeholder="Master şifrenizi girin"
-                  required
-                >
-                <small class="text-muted" v-if="isRegistering">Bu şifre tüm kaydedilen şifrelerinizi koruyacak, güçlü bir şifre seçin!</small>
-              </div>
-              
-              <div class="mb-3" v-if="isRegistering">
-                <label for="confirmPassword" class="form-label">Şifreyi Doğrula</label>
-                <input 
-                  v-model="confirmPassword" 
-                  type="password" 
-                  class="form-control" 
-                  id="confirmPassword" 
-                  placeholder="Master şifrenizi tekrar girin"
-                  required
-                >
-              </div>
-              
-              <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary" :disabled="!isValid">
-                  {{ isRegistering ? 'Kayıt Ol' : 'Giriş Yap' }}
-                </button>
-              </div>
-              
-              <div class="mt-3 text-center" v-if="hasAccount">
-                <p v-if="isRegistering">
-                  Zaten hesabınız var mı? 
-                  <a href="#" @click.prevent="isRegistering = false">Giriş yapın</a>
-                </p>
-                <p v-else>
-                  Hesabınız yok mu? 
-                  <a href="#" @click.prevent="isRegistering = true">Kayıt olun</a>
-                </p>
-              </div>
-            </form>
-          </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-sm-10 col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="text-center">{{ isRegistering ? 'Hesap Oluştur' : 'Giriş Yap' }}</h3>
+        </div>
+        <div class="card-body">
+          <form @submit.prevent="submitForm">
+            <div class="mb-3">
+              <label for="username" class="form-label">Kullanıcı Adı</label>
+              <input 
+                v-model="username" 
+                type="text" 
+                class="form-control" 
+                id="username" 
+                placeholder="Kullanıcı adınızı girin"
+                required
+              >
+            </div>
+            
+            <div class="mb-3">
+              <label for="masterPassword" class="form-label">Master Şifre</label>
+              <input 
+                v-model="masterPassword" 
+                type="password" 
+                class="form-control" 
+                id="masterPassword" 
+                placeholder="Master şifrenizi girin"
+                required
+              >
+              <small class="text-muted" v-if="isRegistering">Bu şifre tüm kaydedilen şifrelerinizi koruyacak, güçlü bir şifre seçin!</small>
+            </div>
+            
+            <div class="mb-3" v-if="isRegistering">
+              <label for="confirmPassword" class="form-label">Şifreyi Doğrula</label>
+              <input 
+                v-model="confirmPassword" 
+                type="password" 
+                class="form-control" 
+                id="confirmPassword" 
+                placeholder="Master şifrenizi tekrar girin"
+                required
+              >
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary" :disabled="!isValid">
+                {{ isRegistering ? 'Kayıt Ol' : 'Giriş Yap' }}
+              </button>
+            </div>
+            
+            <div class="mt-3 text-center" v-if="hasAccount">
+              <p v-if="isRegistering">
+                Zaten hesabınız var mı? 
+                <a href="#" @click.prevent="isRegistering = false">Giriş yapın</a>
+              </p>
+              <p v-else>
+                Hesabınız yok mu? 
+                <a href="#" @click.prevent="isRegistering = true">Kayıt olun</a>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
     </div>
