@@ -58,7 +58,7 @@ Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihr
 - [x] Responsives Design (Custom CSS)
 - [x] Integration einer Browser-Erweiterung
 - [x] Hinzufügen eines Dunkelmodus
-- [ ] Hinzufügen eines Passwortgenerators
+- [X] Hinzufügen eines Passwortgenerators
 - [ ] Kategorien für Passwörter
 - [ ] Import/Export-Funktionalität
 - [ ] Çoklu Dil Desteği (i18n)
