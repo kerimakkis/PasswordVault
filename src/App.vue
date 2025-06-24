@@ -6,31 +6,38 @@ const { isDark, toggleTheme } = useTheme();
 </script>
 
 <template>
-  <div>
+  <div id="app">
     <!-- Theme Toggle Button -->
     <button @click="toggleTheme" class="theme-toggle" :title="isDark ? 'Light Mode' : 'Dark Mode'">
-      <i :class="isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'"></i>
+      <i :class="isDark ? 'fas fa-sun' : 'fas fa-moon'"></i>
     </button>
 
-    <nav class="navbar navbar-expand-lg">
+    <!-- Navigation -->
+    <nav class="navbar">
       <div class="container">
-        <a class="navbar-brand" href="#">Password Vault</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <router-link to="/" class="nav-link">Giriş</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/dashboard" class="nav-link">Şifreler</router-link>
-            </li>
-          </ul>
-        </div>
+        <a class="navbar-brand" href="#">
+          <i class="fas fa-shield-alt"></i>
+          Password Vault
+        </a>
+        
+        <ul class="navbar-nav">
+          <li>
+            <router-link to="/" class="nav-link">
+              <i class="fas fa-home"></i>
+              Ana Sayfa
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/dashboard" class="nav-link">
+              <i class="fas fa-key"></i>
+              Şifreler
+            </router-link>
+          </li>
+        </ul>
       </div>
     </nav>
 
+    <!-- Main Content -->
     <main class="container">
       <RouterView />
     </main>
@@ -39,6 +46,39 @@ const { isDark, toggleTheme } = useTheme();
 
 <style scoped>
 main.container {
-  margin-top: 5rem; /* Increased top margin for more space */
+  margin-top: var(--spacing-2xl);
+  flex: 1;
+}
+
+.navbar-brand i {
+  margin-right: var(--spacing-sm);
+  color: var(--color-primary);
+}
+
+.nav-link i {
+  margin-right: var(--spacing-xs);
+}
+
+/* Mobile responsive navbar */
+@media (max-width: 768px) {
+  .navbar .container {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+  
+  .navbar-nav {
+    width: 100%;
+  }
+  
+  .nav-link {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-lg);
+    transition: background-color var(--transition-fast);
+  }
+  
+  .nav-link:hover {
+    background-color: var(--bg-secondary);
+  }
 }
 </style>
