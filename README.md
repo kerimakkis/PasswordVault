@@ -1,7 +1,7 @@
 # Password Vault - Vue.js 3 Passwort-Manager
 
 ## Projektbeschreibung
-Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihre Passwörter sicher zu speichern. Die Anwendung ist mit Sicherheitsmaßnahmen wie Benutzerauthentifizierung und verschlüsselter Datenspeicherung ausgestattet. Sie ist responsiv gestaltet und bietet Offline-Unterstützung.
+Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihre Passwörter sicher zu speichern. Die Anwendung ist mit umfassenden Sicherheitsmaßnahmen wie Benutzerauthentifizierung und verschlüsselter Datenspeicherung ausgestattet. Sie ist responsiv gestaltet und bietet vollständige Offline-Unterstützung.
 
 ## Verwendete Technologien
 - **Vue.js 3** - Modernes Frontend-Framework
@@ -21,49 +21,58 @@ Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihr
 - **Nahtlose Integration** - Direkte Verbindung zur Hauptanwendung
 
 ## Funktionen
-- 🔐 **Sichere Passwortspeicherung** - Passwörter werden stark verschlüsselt gespeichert.
-- 📲 **Responsive Design** - Flexibles Design, das mit allen Geräten kompatibel ist.
-- 🔑 **Benutzeranmeldung und Authentifizierung** - Client-seitige Authentifizierung mit Master-Passwort.
-- 💾 **Browser-Datenbankunterstützung** - Offline-Datenspeicherung mit IndexedDB.
-- 🛠 **Passwortverwaltung** - Einfache Verwaltung gespeicherter Passwörter.
-- 🌐 **Browser-Erweiterung** - Automatisches Erfassen von Passwörtern von Websites.
-- 🔒 **Starke Verschlüsselung mit AES-256** - Alle Daten werden mit dem AES-256-Algorithmus verschlüsselt gespeichert.
+- 🔐 **Sichere Passwortspeicherung** - Passwörter werden stark verschlüsselt gespeichert
+- 📲 **Responsive Design** - Flexibles Design, das mit allen Geräten kompatibel ist
+- 🔑 **Benutzeranmeldung und Authentifizierung** - Client-seitige Authentifizierung mit Master-Passwort
+- 💾 **Browser-Datenbankunterstützung** - Offline-Datenspeicherung mit IndexedDB
+- 🛠 **Passwortverwaltung** - Einfache Verwaltung gespeicherter Passwörter
+- 🌐 **Browser-Erweiterung** - Automatisches Erfassen von Passwörtern von Websites
+- 🔒 **Starke Verschlüsselung mit AES-256** - Alle Daten werden mit dem AES-256-Algorithmus verschlüsselt gespeichert
+- 🌙 **Dunkelmodus** - Benutzerfreundliche Darstellung bei schlechten Lichtverhältnissen
+- 🔧 **Passwortgenerator** - Erstellung sicherer Passwörter mit verschiedenen Kriterien
 
 ## Installation & Nutzung
-### 1. Klonen Sie das Projekt
+### 1. Projekt klonen
 ```bash
- git clone https://github.com/benutzername/password-vault.git
- cd password-vault
+git clone https://github.com/kerimakkis/password-vault.git
+cd password-vault
 ```
-### 2. Installieren Sie die Abhängigkeiten
+
+### 2. Abhängigkeiten installieren
 ```bash
- npm install
+npm install
 ```
-### 3. Starten Sie die Entwicklungsumgebung
+
+### 3. Entwicklungsumgebung starten
 ```bash
- npm run dev
+npm run dev
 ```
-### 4. Erstellen Sie ein Build (für Deployment)
+
+### 4. Build erstellen (für Deployment)
 ```bash
- npm run build
+npm run build
 ```
 
 ## Roadmap
-- [x] Starten eines Vue.js 3 Projekts (mit Vite)
-- [x] Seitenrouting mit Vue Router
-- [x] Erstellung von Benutzerregistrierungs-/Login-Seiten
-- [x] Integration von IndexedDB (mit Dexie.js)
-- [x] Sichere Verschlüsselung von Passwörtern (CryptoJS / AES-256)
-- [x] Speicherung von Passwörtern
+- [x] Vue.js 3 Projekt starten (mit Vite)
+- [x] Seitenrouting mit Vue Router implementieren
+- [x] Benutzerregistrierungs-/Login-Seiten erstellen
+- [x] IndexedDB integrieren (mit Dexie.js)
+- [x] Sichere Passwortverschlüsselung (CryptoJS / AES-256)
+- [x] Passwortspeicherung implementieren
 - [x] Responsives Design (Custom CSS)
-- [x] Integration einer Browser-Erweiterung
-- [x] Hinzufügen eines Dunkelmodus
-- [X] Hinzufügen eines Passwortgenerators
-- [ ] Kategorien für Passwörter
+- [x] Browser-Erweiterung integrieren
+- [x] Dunkelmodus hinzufügen
+- [x] Passwortgenerator hinzufügen
+- [ ] Passwortkategorien implementieren
 - [ ] Import/Export-Funktionalität
-- [ ] Çoklu Dil Desteği (i18n)
+- [ ] Mehrsprachige Unterstützung (i18n)
 
-## Beitrag
+## Testbenutzer
+**Benutzername:** kerim  
+**Master-Passwort:** 12345
+
+## Beitragen
 Wenn Sie zum Projekt beitragen möchten, senden Sie bitte einen **Pull Request** oder öffnen Sie ein **Issue**. Jedes Feedback und jeder Vorschlag ist willkommen! 🚀
 
 ---
@@ -72,7 +81,5 @@ Wenn Sie zum Projekt beitragen möchten, senden Sie bitte einen **Pull Request**
 
 **Kontakt:**
 📧 email@example.com | 🌐 [Projektseite](https://github.com/kerimakkis/password-vault)
-
-##Test benutzer "kerim" master "12345"
 
 
