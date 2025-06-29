@@ -187,13 +187,14 @@
     </div>
 
     <!-- Edit Password Modal -->
-    <div v-if="editModalOpen" class="modal-overlay">
-      <div class="modal">
+    <div v-if="editModalOpen" class="modal-overlay" @click="closeModal">
+      <div class="modal" @click.stop>
         <div class="modal-header">
           <h3>Şifreyi Güncelle</h3>
         </div>
         <div class="modal-body">
           <div class="form-group">
+            <label class="form-label">Website</label>
             <input 
               v-model="editRecord.website" 
               type="text" 
@@ -202,6 +203,7 @@
             />
           </div>
           <div class="form-group">
+            <label class="form-label">Kullanıcı Adı</label>
             <input 
               v-model="editRecord.username" 
               type="text" 
@@ -210,17 +212,18 @@
             />
           </div>
           <div class="form-group">
+            <label class="form-label">Yeni Şifre</label>
             <input 
               v-model="editRecord.newPassword" 
               type="password" 
               class="form-control" 
-              placeholder="Yeni Şifre" 
+              placeholder="Yeni Şifre (boş bırakılırsa değişmez)" 
             />
           </div>
         </div>
         <div class="modal-footer">
           <button 
-            @click="editModalOpen = false" 
+            @click="closeModal" 
             class="btn btn-secondary"
           >
             İptal
@@ -238,7 +241,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useRouter } from 'vue-router';
 import { db, auth } from '../utils/db';
@@ -392,9 +395,12 @@ const hidePassword = (record) => {
 };
 
 // Şifre düzenleme penceresini aç
-const editPassword = (record) => {
+const editPassword = async (record) => {
   editRecord.value = { ...record, newPassword: '' };
   editModalOpen.value = true;
+  
+  // Vue'nun reaktivite sisteminin güncellenmesini bekle
+  await nextTick();
 };
 
 // Şifreyi güncelle
@@ -416,7 +422,7 @@ const updatePassword = async () => {
   
   try {
     await db.passwords.update(updatedRecord.id, updatedRecord);
-    editModalOpen.value = false;
+    closeModal();
     fetchPasswords();
     toast.success("Şifre güncellendi!");
   } catch (error) {
@@ -499,6 +505,12 @@ const handlePasswordFocus = () => {
     newPassword.value = '';
     isGeneratedPassword.value = false;
   }
+};
+
+// Modal'ı kapat
+const closeModal = () => {
+  editModalOpen.value = false;
+  editRecord.value = {};
 };
 </script>
 
@@ -708,8 +720,10 @@ const handlePasswordFocus = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: var(--spacing-lg);
+  visibility: visible;
+  opacity: 1;
 }
 
 .modal {
@@ -720,6 +734,11 @@ const handlePasswordFocus = () => {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  position: relative;
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 0.2s ease-out;
 }
 
 .modal-header {
@@ -730,10 +749,28 @@ const handlePasswordFocus = () => {
 .modal-header h3 {
   margin: 0;
   color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .modal-body {
   padding: var(--spacing-lg);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.875rem;
 }
 
 .modal-info {

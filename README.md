@@ -35,22 +35,22 @@ Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihr
 ### 1. Projekt klonen
 ```bash
 git clone https://github.com/kerimakkis/password-vault.git
-cd password-vault
+ cd password-vault
 ```
 
 ### 2. Abhängigkeiten installieren
 ```bash
-npm install
+ npm install
 ```
 
 ### 3. Entwicklungsumgebung starten
 ```bash
-npm run dev
+ npm run dev
 ```
 
 ### 4. Build erstellen (für Deployment)
 ```bash
-npm run build
+ npm run build
 ```
 
 ## Roadmap
