@@ -30,6 +30,7 @@ Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihr
 - 🔒 **Starke Verschlüsselung mit AES-256** - Alle Daten werden mit dem AES-256-Algorithmus verschlüsselt gespeichert
 - 🌙 **Dunkelmodus** - Benutzerfreundliche Darstellung bei schlechten Lichtverhältnissen
 - 🔧 **Passwortgenerator** - Erstellung sicherer Passwörter mit verschiedenen Kriterien
+- 🌍 **Mehrsprachige Unterstützung** - Türkçe, İngilizce, Almanca ve İspanyolca dil desteği
 
 ## Installation & Nutzung
 ### 1. Projekt klonen
@@ -66,7 +67,7 @@ git clone https://github.com/kerimakkis/password-vault.git
 - [x] Passwortgenerator hinzufügen
 - [x] Passwortkategorien implementieren
 - [x] Import/Export-Funktionalität
-- [ ] Mehrsprachige Unterstützung (i18n)
+- [x] Mehrsprachige Unterstützung (i18n) - Türkçe, İngilizce, Almanca, İspanyolca
 
 ## Testbenutzer
 **Benutzername:** kerim  

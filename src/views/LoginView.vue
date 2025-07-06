@@ -6,7 +6,7 @@
           <div class="card-header">
             <h2 class="text-center">
               <i class="fas fa-user-circle"></i>
-              {{ isRegistering ? 'Hesap Oluştur' : 'Giriş Yap' }}
+              {{ isRegistering ? t('auth.register') : t('auth.login') }}
             </h2>
           </div>
           
@@ -14,24 +14,24 @@
             <!-- Test Kullanıcısı Hızlı Giriş -->
             <div v-if="!isRegistering" class="test-user-section">
               <div class="test-user-card">
-                <h4><i class="fas fa-flask"></i> Test Kullanıcısı</h4>
-                <p>Demo için hızlı giriş yapın:</p>
+                <h4><i class="fas fa-flask"></i> {{ t('testUser.title') }}</h4>
+                <p>{{ t('testUser.description') }}</p>
                 <div class="test-user-info">
-                  <span><strong>Kullanıcı:</strong> kerim</span>
-                  <span><strong>Şifre:</strong> 12345</span>
+                  <span><strong>{{ t('testUser.username') }}</strong> kerim</span>
+                  <span><strong>{{ t('testUser.password') }}</strong> 12345</span>
                 </div>
                 <button @click="quickLogin" class="btn btn-secondary w-100">
-                  <i class="fas fa-rocket"></i> Test Kullanıcısı ile Giriş
+                  <i class="fas fa-rocket"></i> {{ t('testUser.quickLogin') }}
                 </button>
               </div>
               <div class="divider">
-                <span>veya</span>
+                <span>{{ t('testUser.or') }}</span>
               </div>
             </div>
 
             <!-- Kayıtlı Kullanıcılar Listesi -->
             <div v-if="!isRegistering && registeredUsers.length > 0" class="registered-users-section">
-              <h4><i class="fas fa-users"></i> Kayıtlı Kullanıcılar</h4>
+              <h4><i class="fas fa-users"></i> {{ t('registeredUsers.title') }}</h4>
               <div class="users-list">
                 <div 
                   v-for="user in registeredUsers" 
@@ -45,7 +45,7 @@
                 </div>
               </div>
               <div class="divider">
-                <span>veya yeni kullanıcı</span>
+                <span>{{ t('registeredUsers.orNewUser') }}</span>
               </div>
             </div>
 
@@ -53,14 +53,14 @@
               <div class="form-group">
                 <label for="username" class="form-label">
                   <i class="fas fa-user"></i>
-                  Kullanıcı Adı
+                  {{ t('auth.username') }}
                 </label>
                 <input 
                   v-model="username" 
                   type="text" 
                   class="form-control" 
                   id="username" 
-                  placeholder="Kullanıcı adınızı girin"
+                  :placeholder="t('auth.username')"
                   required
                 >
               </div>
@@ -68,33 +68,33 @@
               <div class="form-group">
                 <label for="masterPassword" class="form-label">
                   <i class="fas fa-lock"></i>
-                  Master Şifre
+                  {{ t('auth.masterPassword') }}
                 </label>
                 <input 
                   v-model="masterPassword" 
                   type="password" 
                   class="form-control" 
                   id="masterPassword" 
-                  placeholder="Master şifrenizi girin"
+                  :placeholder="t('auth.masterPassword')"
                   required
                 >
                 <div class="form-text" v-if="isRegistering">
                   <i class="fas fa-info-circle"></i>
-                  Bu şifre tüm kaydedilen şifrelerinizi koruyacak, güçlü bir şifre seçin!
+                  {{ t('auth.masterPasswordInfo') }}
                 </div>
               </div>
               
               <div class="form-group" v-if="isRegistering">
                 <label for="confirmPassword" class="form-label">
                   <i class="fas fa-check-circle"></i>
-                  Şifreyi Doğrula
+                  {{ t('auth.confirmPassword') }}
                 </label>
                 <input 
                   v-model="confirmPassword" 
                   type="password" 
                   class="form-control" 
                   id="confirmPassword" 
-                  placeholder="Master şifrenizi tekrar girin"
+                  :placeholder="t('auth.confirmPassword')"
                   required
                 >
               </div>
@@ -102,23 +102,23 @@
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary w-100" :disabled="!isValid">
                   <i :class="isRegistering ? 'fas fa-user-plus' : 'fas fa-sign-in-alt'"></i>
-                  {{ isRegistering ? 'Kayıt Ol' : 'Giriş Yap' }}
+                  {{ isRegistering ? t('auth.register') : t('auth.login') }}
                 </button>
               </div>
               
               <div class="form-footer" v-if="hasAccount">
                 <p v-if="isRegistering" class="text-center">
-                  Zaten hesabınız var mı? 
+                  {{ t('auth.alreadyHaveAccount') }} 
                   <a href="#" @click.prevent="isRegistering = false">
                     <i class="fas fa-sign-in-alt"></i>
-                    Giriş yapın
+                    {{ t('auth.login') }}
                   </a>
                 </p>
                 <p v-else class="text-center">
-                  Hesabınız yok mu? 
+                  {{ t('auth.dontHaveAccount') }} 
                   <a href="#" @click.prevent="isRegistering = true">
                     <i class="fas fa-user-plus"></i>
-                    Kayıt olun
+                    {{ t('auth.register') }}
                   </a>
                 </p>
               </div>
@@ -134,8 +134,11 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
+import { useI18n } from 'vue-i18n';
 import { db, auth } from '../utils/db';
 import { hashPassword, generateSalt } from '../utils/encryption';
+
+const { t } = useI18n();
 
 const router = useRouter();
 const toast = useToast();
@@ -187,7 +190,7 @@ const loadRegisteredUsers = async () => {
 // Kayıt ol
 const register = async () => {
   if (!isValid.value) {
-    toast.error('Lütfen tüm alanları doldurun ve şifrelerin eşleştiğinden emin olun');
+    toast.error(t('auth.passwordMismatch'));
     return;
   }
   
@@ -214,18 +217,18 @@ const register = async () => {
     // Oturumu başlat
     auth.saveUser(user);
     
-    toast.success('Hesabınız oluşturuldu, giriş yapıldı!');
+    toast.success(t('auth.registerSuccess'));
     router.push('/dashboard');
   } catch (error) {
     console.error('Kayıt hatası:', error);
-    toast.error('Kayıt sırasında bir hata oluştu: ' + error.message);
+    toast.error(t('auth.registerError') + ': ' + error.message);
   }
 };
 
 // Giriş yap
 const login = async () => {
   if (!username.value || !masterPassword.value) {
-    toast.error('Kullanıcı adı ve şifre gerekli!');
+    toast.error(t('auth.invalidCredentials'));
     return;
   }
   
@@ -234,7 +237,7 @@ const login = async () => {
     const user = await db.users.where('username').equals(username.value).first();
     
     if (!user) {
-      toast.error('Kullanıcı bulunamadı');
+      toast.error(t('auth.userNotFound'));
       return;
     }
     
@@ -242,7 +245,7 @@ const login = async () => {
     const passwordHash = hashPassword(masterPassword.value, user.salt);
     
     if (passwordHash !== user.passwordHash) {
-      toast.error('Hatalı şifre');
+      toast.error(t('auth.invalidCredentials'));
       return;
     }
     
@@ -253,11 +256,11 @@ const login = async () => {
       masterPassword: masterPassword.value // Şifre çözme için gerekli
     });
     
-    toast.success('Giriş başarılı!');
+    toast.success(t('auth.loginSuccess'));
     router.push('/dashboard');
   } catch (error) {
     console.error('Giriş hatası:', error);
-    toast.error('Giriş sırasında bir hata oluştu: ' + error.message);
+    toast.error(t('auth.loginError') + ': ' + error.message);
   }
 };
 

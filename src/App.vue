@@ -1,17 +1,13 @@
 <script setup>
 import { RouterView } from 'vue-router';
 import { useTheme } from './composables/useTheme';
+import LanguageSwitcher from './components/LanguageSwitcher.vue';
 
 const { isDark, toggleTheme } = useTheme();
 </script>
 
 <template>
   <div id="app">
-    <!-- Theme Toggle Button -->
-    <button @click="toggleTheme" class="theme-toggle" :title="isDark ? 'Light Mode' : 'Dark Mode'">
-      <i :class="isDark ? 'fas fa-sun' : 'fas fa-moon'"></i>
-    </button>
-
     <!-- Navigation -->
     <nav class="navbar">
       <div class="container">
@@ -24,16 +20,23 @@ const { isDark, toggleTheme } = useTheme();
           <li>
             <router-link to="/" class="nav-link">
               <i class="fas fa-home"></i>
-              Ana Sayfa
+              {{ $t('nav.home') }}
             </router-link>
           </li>
           <li>
             <router-link to="/dashboard" class="nav-link">
               <i class="fas fa-key"></i>
-              Şifreler
+              {{ $t('nav.passwords') }}
             </router-link>
           </li>
         </ul>
+        
+        <div class="navbar-actions">
+          <LanguageSwitcher />
+          <button @click="toggleTheme" class="theme-toggle" :title="isDark ? 'Light Mode' : 'Dark Mode'">
+            <i :class="isDark ? 'fas fa-sun' : 'fas fa-moon'"></i>
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -57,6 +60,18 @@ main.container {
 
 .nav-link i {
   margin-right: var(--spacing-xs);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Mobile responsive navbar */
