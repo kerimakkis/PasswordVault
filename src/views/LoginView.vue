@@ -11,6 +11,44 @@
           </div>
           
           <div class="card-body">
+            <!-- Test Kullanıcısı Hızlı Giriş -->
+            <div v-if="!isRegistering" class="test-user-section">
+              <div class="test-user-card">
+                <h4><i class="fas fa-flask"></i> Test Kullanıcısı</h4>
+                <p>Demo için hızlı giriş yapın:</p>
+                <div class="test-user-info">
+                  <span><strong>Kullanıcı:</strong> kerim</span>
+                  <span><strong>Şifre:</strong> 12345</span>
+                </div>
+                <button @click="quickLogin" class="btn btn-secondary w-100">
+                  <i class="fas fa-rocket"></i> Test Kullanıcısı ile Giriş
+                </button>
+              </div>
+              <div class="divider">
+                <span>veya</span>
+              </div>
+            </div>
+
+            <!-- Kayıtlı Kullanıcılar Listesi -->
+            <div v-if="!isRegistering && registeredUsers.length > 0" class="registered-users-section">
+              <h4><i class="fas fa-users"></i> Kayıtlı Kullanıcılar</h4>
+              <div class="users-list">
+                <div 
+                  v-for="user in registeredUsers" 
+                  :key="user.id"
+                  class="user-item"
+                  @click="selectUser(user)"
+                >
+                  <i class="fas fa-user"></i>
+                  <span>{{ user.username }}</span>
+                  <i class="fas fa-chevron-right"></i>
+                </div>
+              </div>
+              <div class="divider">
+                <span>veya yeni kullanıcı</span>
+              </div>
+            </div>
+
             <form @submit.prevent="submitForm" class="login-form">
               <div class="form-group">
                 <label for="username" class="form-label">
@@ -110,6 +148,7 @@ const isRegistering = ref(false);
 
 // Kullanıcı hesabı var mı kontrolü
 const hasAccount = ref(false);
+const registeredUsers = ref([]);
 
 // Form validasyonu
 const isValid = computed(() => {
@@ -117,6 +156,33 @@ const isValid = computed(() => {
   if (isRegistering.value && masterPassword.value !== confirmPassword.value) return false;
   return true;
 });
+
+// Test kullanıcısı ile hızlı giriş
+const quickLogin = () => {
+  username.value = 'kerim';
+  masterPassword.value = '12345';
+  login();
+};
+
+// Kullanıcı seç
+const selectUser = (user) => {
+  username.value = user.username;
+  // Şifre girmesi için odaklan
+  document.getElementById('masterPassword').focus();
+};
+
+// Kayıtlı kullanıcıları yükle
+const loadRegisteredUsers = async () => {
+  try {
+    const users = await db.users.toArray();
+    registeredUsers.value = users.map(user => ({
+      id: user.id,
+      username: user.username
+    }));
+  } catch (error) {
+    console.error('Kullanıcılar yüklenirken hata:', error);
+  }
+};
 
 // Kayıt ol
 const register = async () => {
@@ -214,6 +280,8 @@ onMounted(async () => {
   if (auth.isLoggedIn()) {
     router.push('/dashboard');
   }
+
+  await loadRegisteredUsers();
 });
 </script>
 
@@ -261,11 +329,12 @@ onMounted(async () => {
   padding: var(--spacing-xl);
 }
 
+/* ===== LOGIN FORM STYLES ===== */
 .login-form .form-group {
   margin-bottom: var(--spacing-lg);
 }
 
-.form-label {
+.login-form .form-label {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
@@ -274,33 +343,34 @@ onMounted(async () => {
   margin-bottom: var(--spacing-sm);
 }
 
-.form-label i {
+.login-form .form-label i {
   color: var(--color-primary);
   width: 16px;
+  text-align: center;
 }
 
-.form-control {
+.login-form .form-control {
   width: 100%;
   padding: var(--spacing-md);
   font-size: 1rem;
-  border: 2px solid var(--border-primary);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-lg);
   background-color: var(--bg-input);
   color: var(--text-primary);
   transition: all var(--transition-fast);
 }
 
-.form-control:focus {
+.login-form .form-control:focus {
   outline: none;
   border-color: var(--border-focus);
   box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
 }
 
-.form-control::placeholder {
+.login-form .form-control::placeholder {
   color: var(--text-muted);
 }
 
-.form-text {
+.login-form .form-text {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
@@ -309,10 +379,11 @@ onMounted(async () => {
   margin-top: var(--spacing-sm);
 }
 
-.form-text i {
+.login-form .form-text i {
   color: var(--color-info);
 }
 
+/* ===== FORM ACTIONS & FOOTER ===== */
 .form-actions {
   margin-top: var(--spacing-xl);
 }
@@ -322,6 +393,13 @@ onMounted(async () => {
   padding: var(--spacing-md);
   font-size: 1.125rem;
   font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.form-actions .btn:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .form-actions .btn i {
@@ -337,6 +415,7 @@ onMounted(async () => {
 .form-footer p {
   margin: 0;
   color: var(--text-secondary);
+  font-size: 0.875rem;
 }
 
 .form-footer a {
@@ -344,6 +423,9 @@ onMounted(async () => {
   font-weight: 500;
   text-decoration: none;
   transition: color var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
 
 .form-footer a:hover {
@@ -351,11 +433,148 @@ onMounted(async () => {
 }
 
 .form-footer a i {
-  margin-right: var(--spacing-xs);
+  font-size: 0.875rem;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
+/* ===== LOGIN PAGE COMPONENTS ===== */
+
+/* Test User Section */
+.test-user-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.test-user-card {
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal);
+}
+
+.test-user-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.test-user-card h4 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.test-user-card h4 i {
+  color: var(--color-warning);
+  margin-right: var(--spacing-sm);
+}
+
+.test-user-card p {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+  font-size: 0.875rem;
+}
+
+.test-user-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  gap: var(--spacing-sm);
+}
+
+.test-user-info span {
+  background: var(--bg-input);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-primary);
+  flex: 1;
+  text-align: center;
+}
+
+/* Registered Users Section */
+.registered-users-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.registered-users-section h4 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.registered-users-section h4 i {
+  color: var(--color-primary);
+  margin-right: var(--spacing-sm);
+}
+
+.users-list {
+  margin-bottom: var(--spacing-md);
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.user-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-focus);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.user-item i:first-child {
+  color: var(--color-primary);
+  margin-right: var(--spacing-sm);
+  width: 16px;
+  text-align: center;
+}
+
+.user-item i:last-child {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: var(--spacing-lg) 0;
+  position: relative;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border-primary);
+}
+
+.divider span {
+  background: var(--bg-card);
+  padding: 0 var(--spacing-md);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
   .login-page {
     padding: var(--spacing-md);
   }
@@ -370,6 +589,48 @@ onMounted(async () => {
   
   .login-card .card-header h2 {
     font-size: 1.5rem;
+  }
+  
+  .test-user-info {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .user-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .test-user-card,
+  .registered-users-section {
+    margin-bottom: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: var(--spacing-sm);
+  }
+  
+  .login-card .card-header {
+    padding: var(--spacing-md);
+  }
+  
+  .login-card .card-body {
+    padding: var(--spacing-md);
+  }
+  
+  .login-card .card-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .test-user-card h4,
+  .registered-users-section h4 {
+    font-size: 1rem;
+  }
+  
+  .test-user-info span {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
   }
 }
 </style>

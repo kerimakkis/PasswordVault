@@ -22,6 +22,7 @@
   --bg-tertiary: #f1f5f9;
   --bg-card: #ffffff;
   --bg-input: #ffffff;
+  --bg-hover: #f8fafc;
   
   /* Text Colors */
   --text-primary: #1e293b;
@@ -73,6 +74,7 @@
   --bg-tertiary: #334155;
   --bg-card: #1e293b;
   --bg-input: #334155;
+  --bg-hover: #334155;
   
   /* Text Colors */
   --text-primary: #f8fafc;
