@@ -3,9 +3,10 @@ import Dexie from 'dexie';
 export const db = new Dexie('passwordVault');
 
 // DB şemasını ver
-db.version(1).stores({
+db.version(2).stores({
   users: '++id, username, passwordHash, salt, created',
-  passwords: '++id, userId, website, username, encryptedPassword, dateAdded'
+  passwords: '++id, userId, website, username, encryptedPassword, dateAdded, categoryId',
+  categories: '++id, userId, name, color, icon, created'
 });
 
 // Kullanıcı oturum kontrolü için basit yardımcı fonksiyonlar

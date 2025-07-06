@@ -64,8 +64,8 @@ git clone https://github.com/kerimakkis/password-vault.git
 - [x] Browser-Erweiterung integrieren
 - [x] Dunkelmodus hinzufügen
 - [x] Passwortgenerator hinzufügen
-- [ ] Passwortkategorien implementieren
-- [ ] Import/Export-Funktionalität
+- [x] Passwortkategorien implementieren
+- [x] Import/Export-Funktionalität
 - [ ] Mehrsprachige Unterstützung (i18n)
 
 ## Testbenutzer

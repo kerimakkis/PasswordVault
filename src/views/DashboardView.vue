@@ -31,10 +31,43 @@
         <!-- Password Generator Section -->
         <div class="generator-section">
           <PasswordGenerator @password-generated="handlePasswordGenerated" />
+          
+          <!-- Import/Export Section -->
+          <div class="import-export-section">
+            <ImportExport />
+          </div>
         </div>
 
         <!-- Password Management Section -->
         <div class="management-section">
+          <!-- Category Filter -->
+          <div class="category-filter-card">
+            <div class="filter-header">
+              <h3 class="filter-title">
+                <i class="fas fa-filter"></i>
+                Kategori Filtresi
+              </h3>
+              <button @click="showCategoryManager = true" class="btn btn-secondary btn-sm">
+                <i class="fas fa-cog"></i>
+                Kategorileri Yönet
+              </button>
+            </div>
+            
+            <div class="filter-options">
+              <select v-model="selectedCategory" @change="fetchPasswords" class="form-control">
+                <option value="all">Tüm Şifreler</option>
+                <option value="uncategorized">Kategorisiz</option>
+                <option 
+                  v-for="category in categories" 
+                  :key="category.id" 
+                  :value="category.id"
+                >
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
           <!-- Add Password Form -->
           <div class="add-password-card">
             <h2 class="card-title">
@@ -62,6 +95,16 @@
                 placeholder="Şifre" 
                 @focus="handlePasswordFocus"
               />
+              <select v-model="newCategoryId" class="form-control">
+                <option value="">Kategori Seçin (Opsiyonel)</option>
+                <option 
+                  v-for="category in categories" 
+                  :key="category.id" 
+                  :value="category.id"
+                >
+                  {{ category.name }}
+                </option>
+              </select>
             </div>
             <button 
               @click="addPassword" 
@@ -100,6 +143,19 @@
                     <span class="username">
                       {{ record.username }}
                     </span>
+                    <div v-if="record.categoryId" class="password-category">
+                      <span 
+                        class="category-badge"
+                        :style="{ 
+                          backgroundColor: getCategoryById(record.categoryId)?.color + '20',
+                          color: getCategoryById(record.categoryId)?.color,
+                          borderColor: getCategoryById(record.categoryId)?.color
+                        }"
+                      >
+                        <i :class="getCategoryById(record.categoryId)?.icon"></i>
+                        {{ getCategoryById(record.categoryId)?.name }}
+                      </span>
+                    </div>
                   </div>
                   
                   <div class="password-display">
@@ -212,6 +268,19 @@
             />
           </div>
           <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <select v-model="editRecord.categoryId" class="form-control">
+              <option value="">Kategori Seçin</option>
+              <option 
+                v-for="category in categories" 
+                :key="category.id" 
+                :value="category.id"
+              >
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
             <label class="form-label">Yeni Şifre</label>
             <input 
               v-model="editRecord.newPassword" 
@@ -237,6 +306,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Category Manager Modal -->
+    <div v-if="showCategoryManager" class="modal-overlay" @click="showCategoryManager = false">
+      <div class="modal modal-large" @click.stop>
+        <div class="modal-header">
+          <h3>Kategori Yönetimi</h3>
+        </div>
+        <div class="modal-body">
+          <CategoryManager />
+        </div>
+        <div class="modal-footer">
+          <button @click="showCategoryManager = false" class="btn btn-primary">
+            Kapat
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -247,6 +333,9 @@ import { useRouter } from 'vue-router';
 import { db, auth } from '../utils/db';
 import { encryptPassword, decryptPassword } from '../utils/encryption';
 import PasswordGenerator from '../components/PasswordGenerator.vue';
+import CategoryManager from '../components/CategoryManager.vue';
+import ImportExport from '../components/ImportExport.vue';
+import { useCategories } from '../composables/useCategories';
 
 const router = useRouter();
 const toast = useToast();
@@ -261,6 +350,7 @@ const passwordList = ref([]);
 const newWebsite = ref('');
 const newUsername = ref('');
 const newPassword = ref('');
+const newCategoryId = ref(null);
 const isGeneratedPassword = ref(false);
 
 // Şifre düzenleme için
@@ -273,6 +363,11 @@ const capturedWebsite = ref('');
 const capturedUsername = ref('');
 const capturedPassword = ref('');
 
+// Kategori yönetimi
+const { categories, loadCategories, getCategoryById } = useCategories();
+const selectedCategory = ref('all');
+const showCategoryManager = ref(false);
+
 // Master password'e kolay erişim
 const masterPassword = computed(() => currentUser.value?.masterPassword || '');
 
@@ -281,7 +376,16 @@ const fetchPasswords = async () => {
   const userId = auth.getUserId();
   if (!userId) return;
   
-  passwordList.value = await db.passwords.where('userId').equals(userId).toArray();
+  let passwords;
+  if (selectedCategory.value === 'all') {
+    passwords = await db.passwords.where('userId').equals(userId).toArray();
+  } else if (selectedCategory.value === 'uncategorized') {
+    passwords = await db.passwords.where('userId').equals(userId).filter(p => !p.categoryId).toArray();
+  } else {
+    passwords = await db.passwords.where('userId').equals(userId).filter(p => p.categoryId === selectedCategory.value).toArray();
+  }
+  
+  passwordList.value = passwords;
 };
 
 // Yeni şifre ekle
@@ -299,12 +403,14 @@ const addPassword = async () => {
     website: newWebsite.value,
     username: newUsername.value,
     encryptedPassword,
+    categoryId: newCategoryId.value || null,
     dateAdded: new Date().toISOString()
   });
   
   newWebsite.value = '';
   newUsername.value = '';
   newPassword.value = '';
+  newCategoryId.value = null;
   
   fetchPasswords();
   toast.success("Şifre eklendi!");
@@ -460,6 +566,7 @@ onMounted(async () => {
     return;
   }
   
+  await loadCategories();
   await fetchPasswords();
   
   // URL parametrelerini kontrol et
@@ -575,8 +682,40 @@ const closeModal = () => {
   min-width: 0;
 }
 
+.import-export-section {
+  margin-top: var(--spacing-xl);
+}
+
 .management-section {
   min-width: 0;
+}
+
+.category-filter-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.filter-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.filter-title i {
+  color: var(--color-primary);
+  margin-right: var(--spacing-sm);
 }
 
 .add-password-card {
@@ -676,6 +815,22 @@ const closeModal = () => {
 .username {
   font-size: 0.875rem;
   color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.password-category {
+  margin-top: var(--spacing-xs);
+}
+
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
 }
 
 .password-display {
@@ -739,6 +894,10 @@ const closeModal = () => {
   opacity: 1;
   transform: scale(1);
   transition: transform 0.2s ease-out;
+}
+
+.modal-large {
+  max-width: 800px;
 }
 
 .modal-header {
