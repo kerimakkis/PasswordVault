@@ -3,11 +3,19 @@ import { useToast } from 'vue-toastification';
 import { db, auth } from '../utils/db';
 import { encryptPassword, decryptPassword } from '../utils/encryption';
 
+/**
+ * Composable for importing and exporting password data.
+ * @returns {Object} Import/Export methods and loading state.
+ */
 export function useImportExport() {
   const toast = useToast();
   const loading = ref(false);
 
   // CSV formatında dışa aktar
+  /**
+   * Exports passwords to a CSV file.
+   * Decrypts passwords before exporting.
+   */
   const exportToCSV = async () => {
     loading.value = true;
     try {
@@ -16,7 +24,7 @@ export function useImportExport() {
 
       const passwords = await db.passwords.where('userId').equals(userId).toArray();
       const categories = await db.categories.where('userId').equals(userId).toArray();
-      
+
       // Şifreleri çöz
       const decryptedPasswords = passwords.map(password => {
         try {
@@ -36,7 +44,7 @@ export function useImportExport() {
 
       // CSV başlıkları
       const headers = ['Website', 'Kullanıcı Adı', 'Şifre', 'Kategori', 'Eklenme Tarihi'];
-      
+
       // CSV satırları
       const rows = decryptedPasswords.map(password => {
         const category = categories.find(cat => cat.id === password.categoryId);
@@ -76,6 +84,10 @@ export function useImportExport() {
   };
 
   // JSON formatında dışa aktar
+  /**
+   * Exports passwords to a JSON file.
+   * Decrypts passwords before exporting.
+   */
   const exportToJSON = async () => {
     loading.value = true;
     try {
@@ -84,7 +96,7 @@ export function useImportExport() {
 
       const passwords = await db.passwords.where('userId').equals(userId).toArray();
       const categories = await db.categories.where('userId').equals(userId).toArray();
-      
+
       // Şifreleri çöz
       const decryptedPasswords = passwords.map(password => {
         try {
@@ -135,6 +147,11 @@ export function useImportExport() {
   };
 
   // CSV dosyasından içe aktar
+  /**
+   * Imports passwords from a CSV file.
+   * @param {File} file - The CSV file to import.
+   * @returns {Promise<Object>} Import statistics (importedCount, skippedCount).
+   */
   const importFromCSV = async (file) => {
     loading.value = true;
     try {
@@ -144,11 +161,11 @@ export function useImportExport() {
       const text = await file.text();
       const lines = text.split('\n');
       const headers = lines[0].split(',').map(h => h.replace(/"/g, ''));
-      
+
       // Gerekli sütunları kontrol et
       const requiredColumns = ['Website', 'Kullanıcı Adı', 'Şifre'];
       const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-      
+
       if (missingColumns.length > 0) {
         throw new Error(`Eksik sütunlar: ${missingColumns.join(', ')}`);
       }
@@ -158,7 +175,7 @@ export function useImportExport() {
 
       for (let i = 1; i < lines.length; i++) {
         if (!lines[i].trim()) continue;
-        
+
         const values = lines[i].split(',').map(v => v.replace(/"/g, ''));
         const website = values[headers.indexOf('Website')];
         const username = values[headers.indexOf('Kullanıcı Adı')];
@@ -213,6 +230,11 @@ export function useImportExport() {
   };
 
   // JSON dosyasından içe aktar
+  /**
+   * Imports passwords from a JSON file.
+   * @param {File} file - The JSON file to import.
+   * @returns {Promise<Object>} Import statistics (importedCount, skippedCount).
+   */
   const importFromJSON = async (file) => {
     loading.value = true;
     try {

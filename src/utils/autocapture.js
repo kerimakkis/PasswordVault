@@ -1,6 +1,10 @@
 // Chrome uzantısı ile ana uygulama arasında iletişim kuracak content script
 
 // AutoCapture fonksiyonlarını içe aktarın
+/**
+ * Initializes the observer for login forms and password fields.
+ * @param {Function} onPasswordCaptured - Callback function to handle captured password data.
+ */
 export function observeLoginForms(onPasswordCaptured) {
   // Sayfa yüklendiğinde mevcut formları ve şifre alanlarını kontrol et
   setTimeout(() => {
@@ -18,32 +22,36 @@ export function observeLoginForms(onPasswordCaptured) {
 }
 
 // 📌 Form içinde olmayan şifre alanlarını tespit eden fonksiyon
+/**
+ * Detects password fields that are not part of a form element.
+ * @param {Function} onPasswordCaptured - Callback function to handle captured password data.
+ */
 function detectPasswordFields(onPasswordCaptured) {
   // Form içinde olmayan tüm şifre alanlarını bul
   const passwordFields = document.querySelectorAll('input[type="password"]:not(form *)');
-  
+
   passwordFields.forEach((passwordField) => {
     if (!passwordField.hasAttribute('data-pw-listener')) {
       passwordField.setAttribute('data-pw-listener', 'true');
-      
+
       // Yakındaki olası kullanıcı adı alanını bul
       const possibleUsernameField = findNearbyUsernameField(passwordField);
-      
+
       // Şifre alanı değişikliğini dinle
-      passwordField.addEventListener("input", function() {
+      passwordField.addEventListener("input", function () {
         const passwordValue = passwordField.value;
         const usernameValue = possibleUsernameField ? possibleUsernameField.value : "";
-        
+
         if (passwordValue && passwordValue.length > 3) {
           onPasswordCaptured(usernameValue, passwordValue, window.location.hostname);
         }
       });
-      
+
       // Şifre alanı blur olayını dinle (odak kaybettiğinde)
-      passwordField.addEventListener("blur", function() {
+      passwordField.addEventListener("blur", function () {
         const passwordValue = passwordField.value;
         const usernameValue = possibleUsernameField ? possibleUsernameField.value : "";
-        
+
         if (passwordValue && passwordValue.length > 3) {
           onPasswordCaptured(usernameValue, passwordValue, window.location.hostname);
         }
@@ -53,6 +61,11 @@ function detectPasswordFields(onPasswordCaptured) {
 }
 
 // Şifre alanının yakınındaki olası kullanıcı adı alanını bul
+/**
+ * Finds a nearby username field for a given password field.
+ * @param {HTMLElement} passwordField - The password input element.
+ * @returns {HTMLElement|null} The found username input element or null.
+ */
 function findNearbyUsernameField(passwordField) {
   // Aynı container içindeki text veya email inputları ara
   const parent = passwordField.parentElement;
@@ -60,25 +73,29 @@ function findNearbyUsernameField(passwordField) {
     const usernameField = parent.querySelector('input[type="text"], input[type="email"]');
     if (usernameField) return usernameField;
   }
-  
+
   // Bir üst container'a bak
   const grandParent = parent ? parent.parentElement : null;
   if (grandParent) {
     const usernameField = grandParent.querySelector('input[type="text"], input[type="email"]');
     if (usernameField) return usernameField;
   }
-  
+
   // Sayfadaki tüm text/email inputlarını kontrol et ve en yakın olanı bul
   const allUsernameFields = document.querySelectorAll('input[type="text"], input[type="email"]');
   if (allUsernameFields.length > 0) {
     // Basitçe ilk bulunanı döndür
     return allUsernameFields[0];
   }
-  
+
   return null;
 }
 
 // 📌 Formları tespit edip event listener ekleyen fonksiyon
+/**
+ * Detects forms and adds event listeners to capture password data on submit.
+ * @param {Function} onPasswordCaptured - Callback function to handle captured password data.
+ */
 function detectForms(onPasswordCaptured) {
   const forms = document.querySelectorAll("form");
 
@@ -90,21 +107,21 @@ function detectForms(onPasswordCaptured) {
       // Form submit olayını dinle
       if (!form.hasAttribute('data-pw-listener')) {
         form.setAttribute('data-pw-listener', 'true');
-        
-        form.addEventListener("submit", function(event) {
+
+        form.addEventListener("submit", function (event) {
           const passwordValue = passwordField.value;
           const usernameValue = usernameField.value || "";
-          
+
           if (passwordValue && passwordValue.length > 3) {
             onPasswordCaptured(usernameValue, passwordValue, window.location.hostname);
           }
         });
-        
+
         // Şifre alanı değişikliğini dinle
-        passwordField.addEventListener("input", function() {
+        passwordField.addEventListener("input", function () {
           const passwordValue = passwordField.value;
           const usernameValue = usernameField.value || "";
-          
+
           if (passwordValue && passwordValue.length > 3) {
             onPasswordCaptured(usernameValue, passwordValue, window.location.hostname);
           }
@@ -119,11 +136,10 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "passwordCaptured") {
       // Chrome storage'a kaydet
-      chrome.storage.local.set({ 
+      chrome.storage.local.set({
         capturedData: message.data,
-        showSavePrompt: true 
+        showSavePrompt: true
       });
     }
   });
 }
-  

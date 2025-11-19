@@ -1,9 +1,17 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 
+/**
+ * Composable for managing application theme (dark/light mode).
+ * @returns {Object} Theme state and toggle function.
+ */
 export function useTheme() {
   // Check localStorage for saved theme preference, default to light
   const isDark = ref(false) // Start with false, will be set in onMounted
 
+  /**
+   * Toggles the theme between dark and light.
+   * Saves preference to localStorage.
+   */
   const toggleTheme = () => {
     isDark.value = !isDark.value
     // Save the user's explicit choice to localStorage
@@ -60,4 +68,4 @@ export function useTheme() {
     isDark,
     toggleTheme
   }
-} 
+}

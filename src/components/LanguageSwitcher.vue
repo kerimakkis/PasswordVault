@@ -22,7 +22,7 @@ import { setLocale, getCurrentLocale } from '../i18n';
 import trFlag from '../assets/flags/tr.svg';
 import enFlag from '../assets/flags/en.svg';
 import deFlag from '../assets/flags/de.svg';
-import esFlag from '../assets/flags/es.svg';
+import esFlag from '../assets/flags/es.png';
 
 const { t } = useI18n();
 

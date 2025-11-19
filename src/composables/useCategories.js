@@ -14,11 +14,19 @@ const DEFAULT_CATEGORIES = [
   { name: 'Diğer', color: '#6b7280', icon: 'fas fa-ellipsis-h' }
 ];
 
+/**
+ * Composable for managing categories.
+ * @returns {Object} Category state and management methods.
+ */
 export function useCategories() {
   const categories = ref([]);
   const loading = ref(false);
 
   // Kategorileri yükle
+  /**
+   * Loads categories for the current user.
+   * Creates default categories if none exist.
+   */
   const loadCategories = async () => {
     loading.value = true;
     try {
@@ -26,13 +34,13 @@ export function useCategories() {
       if (!userId) return;
 
       let userCategories = await db.categories.where('userId').equals(userId).toArray();
-      
+
       // Eğer kullanıcının hiç kategorisi yoksa varsayılanları oluştur
       if (userCategories.length === 0) {
         await createDefaultCategories(userId);
         userCategories = await db.categories.where('userId').equals(userId).toArray();
       }
-      
+
       categories.value = userCategories;
     } catch (error) {
       console.error('Kategoriler yüklenirken hata:', error);
@@ -42,8 +50,12 @@ export function useCategories() {
   };
 
   // Varsayılan kategorileri oluştur
+  /**
+   * Creates default categories for a new user.
+   * @param {number} userId - The user ID.
+   */
   const createDefaultCategories = async (userId) => {
-    const promises = DEFAULT_CATEGORIES.map(category => 
+    const promises = DEFAULT_CATEGORIES.map(category =>
       db.categories.add({
         userId,
         name: category.name,
@@ -56,6 +68,11 @@ export function useCategories() {
   };
 
   // Yeni kategori ekle
+  /**
+   * Adds a new category.
+   * @param {Object} categoryData - The category data.
+   * @returns {Promise<Object>} The created category.
+   */
   const addCategory = async (categoryData) => {
     try {
       const userId = auth.getUserId();
@@ -72,7 +89,7 @@ export function useCategories() {
       const id = await db.categories.add(newCategory);
       newCategory.id = id;
       categories.value.push(newCategory);
-      
+
       return newCategory;
     } catch (error) {
       console.error('Kategori eklenirken hata:', error);
@@ -81,10 +98,15 @@ export function useCategories() {
   };
 
   // Kategori güncelle
+  /**
+   * Updates an existing category.
+   * @param {number} id - The category ID.
+   * @param {Object} categoryData - The new category data.
+   */
   const updateCategory = async (id, categoryData) => {
     try {
       await db.categories.update(id, categoryData);
-      
+
       const index = categories.value.findIndex(cat => cat.id === id);
       if (index !== -1) {
         categories.value[index] = { ...categories.value[index], ...categoryData };
@@ -96,11 +118,16 @@ export function useCategories() {
   };
 
   // Kategori sil
+  /**
+   * Deletes a category.
+   * Throws error if category contains passwords.
+   * @param {number} id - The category ID.
+   */
   const deleteCategory = async (id) => {
     try {
       // Önce bu kategoriye ait şifreleri kontrol et
       const passwordsInCategory = await db.passwords.where('categoryId').equals(id).count();
-      
+
       if (passwordsInCategory > 0) {
         throw new Error('Bu kategoriye ait şifreler var. Önce şifreleri başka kategoriye taşıyın.');
       }
@@ -114,6 +141,11 @@ export function useCategories() {
   };
 
   // Kategoriye göre şifreleri getir
+  /**
+   * Gets passwords belonging to a specific category.
+   * @param {number|string} categoryId - The category ID or filter ('all', 'uncategorized').
+   * @returns {Promise<Array>} List of passwords.
+   */
   const getPasswordsByCategory = async (categoryId) => {
     try {
       const userId = auth.getUserId();
@@ -133,16 +165,30 @@ export function useCategories() {
   };
 
   // Kategori adına göre kategori bul
+  /**
+   * Finds a category by its name.
+   * @param {string} name - The category name.
+   * @returns {Object|undefined} The category object.
+   */
   const getCategoryByName = (name) => {
     return categories.value.find(cat => cat.name === name);
   };
 
   // Kategori ID'sine göre kategori bul
+  /**
+   * Finds a category by its ID.
+   * @param {number} id - The category ID.
+   * @returns {Object|undefined} The category object.
+   */
   const getCategoryById = (id) => {
     return categories.value.find(cat => cat.id === id);
   };
 
   // Kategori istatistikleri
+  /**
+   * Computed property for category statistics.
+   * @returns {Array} Categories with additional stats.
+   */
   const getCategoryStats = computed(() => {
     return categories.value.map(category => ({
       ...category,

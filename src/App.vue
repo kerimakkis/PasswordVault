@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * Root component of the application.
+ * Handles global layout, navigation, and theme initialization.
+ */
 import { RouterView } from 'vue-router';
 import { useTheme } from './composables/useTheme';
 import LanguageSwitcher from './components/LanguageSwitcher.vue';

@@ -147,46 +147,6 @@
           >
             <i class="fas fa-copy"></i>
           </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted, watch } from 'vue'
-import { usePasswordGenerator } from '../composables/usePasswordGenerator'
-
-// Emit tanımla
-const emit = defineEmits(['passwordGenerated'])
-
-const {
-  passwordLength,
-  generatedPassword,
-  passwordHistory,
-  strengthScore,
-  strengthLabel,
-  generateNewPassword,
-  copyToClipboard,
-  clearHistory,
-  applyPreset
-} = usePasswordGenerator()
-
-const copySuccess = ref(false)
-
-const copyPassword = async () => {
-  const success = await copyToClipboard()
-  if (success) {
-    copySuccess.value = true
-    setTimeout(() => {
-      copySuccess.value = false
-    }, 2000)
-  }
-}
-
-const copySpecificPassword = async (password) => {
-  try {
-    await navigator.clipboard.writeText(password)
     // Show success feedback
   } catch (error) {
     console.error('Clipboard error:', error)

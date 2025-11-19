@@ -1,22 +1,3 @@
-<script setup>
-import { useRouter } from 'vue-router';
-import { auth } from '../utils/db';
-
-const router = useRouter();
-
-// Kullanıcı durumuna göre yönlendirme
-const navigateBasedOnAuth = () => {
-  if (auth.isLoggedIn()) {
-    router.push('/dashboard');
-  } else {
-    router.push('/login');
-  }
-};
-</script>
-
-<template>
-  <div class="home-page">
-    <!-- Hero Section -->
     <section class="hero">
       <div class="container">
         <div class="hero-content text-center">
