@@ -21,16 +21,16 @@ Password Vault ist eine webbasierte Anwendung, die es Benutzern ermöglicht, ihr
 - **Nahtlose Integration** - Direkte Verbindung zur Hauptanwendung
 
 ## Funktionen
-- 🔐 **Sichere Passwortspeicherung** - Passwörter werden stark verschlüsselt gespeichert
-- 📲 **Responsive Design** - Flexibles Design, das mit allen Geräten kompatibel ist
-- 🔑 **Benutzeranmeldung und Authentifizierung** - Client-seitige Authentifizierung mit Master-Passwort
-- 💾 **Browser-Datenbankunterstützung** - Offline-Datenspeicherung mit IndexedDB
-- 🛠 **Passwortverwaltung** - Einfache Verwaltung gespeicherter Passwörter
-- 🌐 **Browser-Erweiterung** - Automatisches Erfassen von Passwörtern von Websites
-- 🔒 **Starke Verschlüsselung mit AES-256** - Alle Daten werden mit dem AES-256-Algorithmus verschlüsselt gespeichert
-- 🌙 **Dunkelmodus** - Benutzerfreundliche Darstellung bei schlechten Lichtverhältnissen
-- 🔧 **Passwortgenerator** - Erstellung sicherer Passwörter mit verschiedenen Kriterien
-- 🌍 **Mehrsprachige Unterstützung** - Türkçe, İngilizce, Almanca ve İspanyolca dil desteği
+-  **Sichere Passwortspeicherung** - Passwörter werden stark verschlüsselt gespeichert
+-  **Responsive Design** - Flexibles Design, das mit allen Geräten kompatibel ist
+-  **Benutzeranmeldung und Authentifizierung** - Client-seitige Authentifizierung mit Master-Passwort
+-  **Browser-Datenbankunterstützung** - Offline-Datenspeicherung mit IndexedDB
+-  **Passwortverwaltung** - Einfache Verwaltung gespeicherter Passwörter
+-  **Browser-Erweiterung** - Automatisches Erfassen von Passwörtern von Websites
+-  **Starke Verschlüsselung mit AES-256** - Alle Daten werden mit dem AES-256-Algorithmus verschlüsselt gespeichert
+-  **Dunkelmodus** - Benutzerfreundliche Darstellung bei schlechten Lichtverhältnissen
+-  **Passwortgenerator** - Erstellung sicherer Passwörter mit verschiedenen Kriterien
+-  **Mehrsprachige Unterstützung** - Türkçe, İngilizce, Almanca ve İspanyolca dil desteği
 
 ## Installation & Nutzung
 ### 1. Projekt klonen
@@ -78,9 +78,9 @@ Wenn Sie zum Projekt beitragen möchten, senden Sie bitte einen **Pull Request**
 
 ---
 
-📌 **Lizenz**: Unter der MIT-Lizenz veröffentlicht.
+ **Lizenz**: Unter der MIT-Lizenz veröffentlicht.
 
 **Kontakt:**
-📧 email@example.com | 🌐 [Projektseite](https://github.com/kerimakkis/password-vault)
+ kerimakkis@gmail.com |  [Projektseite](https://github.com/kerimakkis/password-vault)
 
 
